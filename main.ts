@@ -2,11 +2,7 @@ import { Construct } from "constructs";
 import { App, TerraformStack, TerraformOutput } from "cdktf";
 import {
   AwsProvider,
-  IamUser,
-  IamGroup,
-  IamRole,
-  IamPolicy,
-  IamPolicyAttachment,
+  iam,
 } from "./.gen/providers/aws/";
 
 class MyStack extends TerraformStack {
@@ -17,11 +13,11 @@ class MyStack extends TerraformStack {
       region: "us-west-1",
     });
 
-    const iamNewGroup = new IamGroup(this, "Group", {
+    const iamNewGroup = new iam.IamGroup(this, "Group", {
       name: "CDKtf-TypeScript-Group-Demo",
     });
 
-    const iamNewUser = new IamUser(this, "User", {
+    const iamNewUser = new iam.IamUser(this, "User", {
       name: "CDKtf-TypeScript-User-Demo",
       tags: {
         Name: "CDKtf-TypeScript-User-Demo",
@@ -30,7 +26,7 @@ class MyStack extends TerraformStack {
       },
     });
 
-    const iamNewRole = new IamRole(this, "role", {
+    const iamNewRole = new iam.IamRole(this, "role", {
       name: "CDKtf-TypeScript-role-Demo",
       assumeRolePolicy: JSON.stringify({
         Version: "2012-10-17",
@@ -51,7 +47,7 @@ class MyStack extends TerraformStack {
       },
     });
 
-    const iamNewPolicy = new IamPolicy(this, "policy", {
+    const iamNewPolicy = new iam.IamPolicy(this, "policy", {
       name: "CDKtf-TypeScript-policy-Demo",
       policy: JSON.stringify({
         Version: "2012-10-17",
@@ -66,7 +62,16 @@ class MyStack extends TerraformStack {
       description: "This policy is for typescript demo",
     });
 
-    const iamAttachment = new IamPolicyAttachment(
+    new iam.IamUserGroupMembership(
+      this,
+      "iamusergroupmembership",
+      {
+        groups: [iamNewGroup.name],
+        user: iamNewUser.name,
+      }
+    );
+
+    const iamAttachment = new iam.IamPolicyAttachment(
       this,
       "iampolicyattachement",
       {
@@ -97,9 +102,10 @@ class MyStack extends TerraformStack {
     new TerraformOutput(this, "iam_attachemnt", {
       value: iamAttachment.name,
     });
+
   }
 }
 
 const app = new App();
-new MyStack(app, "aws-iam");
+new MyStack(app, "cdktf-typescript-aws-iam");
 app.synth();
