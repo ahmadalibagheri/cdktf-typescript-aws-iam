@@ -35,9 +35,9 @@ You can now edit the `main.ts` file if you want to modify any code.
 
 ```typescript
 vim main.ts
-import { Construct } from 'constructs';
-import { App, TerraformStack , TerraformOutput  } from 'cdktf';
-import {AwsProvider, IamUser , IamGroup , IamRole  ,IamPolicy , IamPolicyAttachment} from "./.gen/providers/aws/";
+import { Construct } from "constructs";
+import { App, TerraformStack, TerraformOutput } from "cdktf";
+import { AwsProvider, iam } from "./.gen/providers/aws/";
 
 
 class MyStack extends TerraformStack {
